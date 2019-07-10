@@ -1,0 +1,7 @@
+<p>led works!</p>
+<p>Zahl: {{ led.index + 1 }}</p>
+<div
+  class="box"
+  [style.backgroundColor]="led.color"
+  (click)="handleClick()"
+></div>
