@@ -1,22 +1,34 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  EventEmitter,
+  Output,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { Led } from '../model/led';
 
 @Component({
   selector: 'pi-led',
   templateUrl: './led.component.html',
-  styleUrls: ['./led.component.css']
+  styleUrls: ['./led.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LedComponent implements OnInit {
-  led: Led = {
-    index: 0,
-    color: 'blue'
-  };
+  @Input('piLed')
+  led: Led;
+
+  @Output()
+  ledChange = new EventEmitter<number>();
 
   constructor() {}
 
   ngOnInit() {}
 
-  handleClick() {
-    console.log('Clicked');
+  handleClick(ev: MouseEvent) {
+    if (ev.ctrlKey) {
+      console.log('Clicked');
+      this.ledChange.emit(this.led.index);
+    }
   }
 }
