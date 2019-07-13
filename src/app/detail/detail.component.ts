@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ColorService } from '../shared/color.service';
 import { map } from 'rxjs/operators';
 import { Led } from '../model/led';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'pi-detail',
@@ -12,16 +13,13 @@ import { Led } from '../model/led';
 export class DetailComponent implements OnInit {
   led: Led;
 
+  led$: Observable<Led>;
+
   constructor(private route: ActivatedRoute, private service: ColorService) {}
 
   ngOnInit() {
     const index = this.route.snapshot.paramMap.get('index');
 
-    this.service
-      .readColors()
-      .pipe(map(leds => leds[index]))
-      .subscribe({
-        next: led => (this.led = led)
-      });
+    this.led$ = this.service.readColors().pipe(map(leds => leds[index]));
   }
 }

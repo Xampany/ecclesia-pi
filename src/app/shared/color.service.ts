@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Led } from '../model/led';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import * as tinycolor from 'tinycolor2';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,13 @@ import { Observable } from 'rxjs';
 export class ColorService {
   private readonly BASE_URL =
     'https://e058e2af50c2bd0a8119d48dffc38266.balena-devices.com/api/colors';
+
+  /**
+   * Eine Liste zufälliger Farben
+   */
+  private readonly COLORS = Array.from(Array(8), () =>
+    tinycolor.random().toRgbString()
+  );
 
   constructor(private client: HttpClient) {}
 
@@ -21,9 +29,11 @@ export class ColorService {
     const body = {
       color
     };
-    const res$ = this.client.put(url, body, {
-      responseType: 'text'
-    });
+    const res$ = this.client
+      .put(url, body, {
+        responseType: 'text'
+      })
+      .pipe(catchError(() => of(color)));
 
     return res$;
   }
@@ -35,7 +45,10 @@ export class ColorService {
     const url = this.BASE_URL;
     const res$ = this.client.get<string[]>(url);
 
-    const leds$ = res$.pipe(map(colors => this.parseColors(colors)));
+    const leds$ = res$.pipe(
+      catchError(() => of(this.COLORS)),
+      map(colors => this.parseColors(colors))
+    );
 
     return leds$;
   }
