@@ -27,7 +27,6 @@ export class LedComponent implements OnInit {
 
   handleClick(ev: MouseEvent) {
     if (ev.ctrlKey) {
-      console.log('Clicked');
       this.ledChange.emit(this.led.index);
     }
   }

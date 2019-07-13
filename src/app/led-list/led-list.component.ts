@@ -17,7 +17,7 @@ export class LedListComponent implements OnInit, OnDestroy {
   constructor(private service: ColorService) {}
 
   ngOnInit() {
-    const regular$ = interval(10000);
+    const regular$ = interval(1000);
 
     this.sub = regular$
       .pipe(
@@ -48,5 +48,9 @@ export class LedListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: color => (this.leds[index] = { index, color })
       });
+  }
+
+  updateFlash() {
+    // TODO service aufrufen
   }
 }

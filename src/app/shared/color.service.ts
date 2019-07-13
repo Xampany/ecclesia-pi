@@ -9,10 +9,13 @@ import { Observable } from 'rxjs';
 })
 export class ColorService {
   private readonly BASE_URL =
-    'https://ae680a0551cf8bd14b83c131e0796b82.balena-devices.com/api/colors';
+    'https://e058e2af50c2bd0a8119d48dffc38266.balena-devices.com/api/colors';
 
   constructor(private client: HttpClient) {}
 
+  /**
+   * Aktualisiert die Farbe für den angegebenen index
+   */
   updateColor(index: number, color = 'goldenrod'): Observable<string> {
     const url = `${this.BASE_URL}/${index}`;
     const body = {
@@ -25,23 +28,23 @@ export class ColorService {
     return res$;
   }
 
+  /**
+   * Liefert die Liste der Leds mit den aktuellen Farben
+   */
   readColors(): Observable<Led[]> {
     const url = this.BASE_URL;
     const res$ = this.client.get<string[]>(url);
 
-    const leds$ = res$.pipe(
-      map(colors => {
-        const leds: Led[] = [];
-        for (let i = 0; i < colors.length; i++) {
-          leds.push({
-            index: i,
-            color: colors[i]
-          });
-        }
-        return leds;
-      })
-    );
+    const leds$ = res$.pipe(map(colors => this.parseColors(colors)));
 
     return leds$;
+  }
+
+  /**
+   *
+   * @param colors Die Farben als Liste von Strings
+   */
+  private parseColors(colors: string[]): Led[] {
+    return colors.map((color, index) => ({ index, color }));
   }
 }

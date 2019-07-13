@@ -5,3 +5,7 @@
   [style.backgroundColor]="led.color"
   (click)="handleClick($event)"
 ></div>
+<p>
+  {{ led.color | piColor: 'name' }}
+</p>
+<pre hidden><code>{{ led | json }}</code></pre>
